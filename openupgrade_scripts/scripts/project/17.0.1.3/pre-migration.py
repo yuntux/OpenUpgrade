@@ -70,9 +70,18 @@ def _set_default_analytic_plan_id(env):
             "analytic.analytic_plan_projects", str(plan_id)
         )
 
+def _delete_duplicate_ir_act_window_view(env):
+    openupgrade.logged_query(
+        env.cr,
+        """
+        DELETE FROM ir_act_window_view
+        WHERE act_window_id=271
+        """,
+    )
 
 @openupgrade.migrate()
 def migrate(env, version):
+    _delete_duplicate_ir_act_window_view(env)
     _rename_fields(env)
     _convert_project_task_state(env)
     _set_default_analytic_plan_id(env)
