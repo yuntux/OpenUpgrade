@@ -78,3 +78,10 @@ def migrate(env, version):
     )
     _analytic_line_create_x_plan_column(env)
     _analytic_plan_update_applicability_into_property(env)
+
+    # Tasmane
+    TARGET_PLAN_ID = 1
+    plans_to_delete = env['account.analytic.plan'].search([('id', '!=', TARGET_PLAN_ID)])
+    for plan in plans_to_delete :
+        plan.account_ids.plan_id = TARGET_PLAN_ID
+    openupgrade.safe_unlink(plans_to_delete, do_raise=True)
