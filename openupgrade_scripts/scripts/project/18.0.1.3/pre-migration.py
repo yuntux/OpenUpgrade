@@ -1,8 +1,19 @@
 from openupgradelib import openupgrade
+import logging
+_logger = logging.getLogger(__name__)
 
 _field_renames = [
     ("project.project", "project_project", "analytic_account_id", "account_id"),
 ]
+
+def ir_actions_act_window_view_project_duplicate(env):
+    _logger.info("*********************************************************************** IR ACTION")
+    env.cr.execute(
+        """
+        DELETE FROM ir_act_window_view
+        WHERE (act_window_id=271 AND view_mode in ('kanban', 'list', 'tree'));
+        """
+    )
 
 
 @openupgrade.migrate()
@@ -21,3 +32,4 @@ def migrate(env, version):
                 )
             ],
         )
+    ir_actions_act_window_view_project_duplicate(env)
