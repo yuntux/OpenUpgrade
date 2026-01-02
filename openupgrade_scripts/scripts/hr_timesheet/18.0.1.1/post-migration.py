@@ -19,8 +19,15 @@ def _convert_task_progress(env):
         env.cr, "UPDATE project_task SET progress = progress / 100"
     )
 
+def _correct_user_id_stock(env):
+	lines = env['account.analytic.line'].search([('employee_id', '!=', False)])
+	for line in lines :
+		if line.employee_id.user_id :
+			if line.user_id != line.employee_id.user_id :
+				line.user_id = line.employee_id.user_id.id
 
 @openupgrade.migrate()
 def migrate(env, version):
     openupgrade.load_data(env, "hr_timesheet", "18.0.1.1/noupdate_changes.xml")
     _convert_task_progress(env)
+    _correct_user_id_stock(env)
